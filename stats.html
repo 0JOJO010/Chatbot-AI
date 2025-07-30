@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8"><title>Stats - IT Chatbot</title>
+  <style>
+    body { font-family: sans-serif; padding:2rem; background:#f4f4f4; }
+    table { width:100%; border-collapse: collapse; background:white; }
+    th, td { padding:8px 12px; border:1px solid #ccc; text-align:left; }
+    th { background:#007bff; color:white; }
+  </style>
+</head>
+<body>
+  <h2>📊 สถิติหัวข้อถูกถามบ่อย </h2>
+  <a href="{{ url_for('chat_page') }}">← กลับไปหน้าแชท</a>
+  <table>
+    <thead><tr><th>อันดับ</th><th>หัวข้อ</th><th>จำนวนครั้ง</th></tr></thead>
+    <tbody>
+      {% for topic, count in top_topics %}
+      <tr>
+        <td>{{ loop.index }}</td>
+        <td>{{ topic }}</td>
+        <td>{{ count }}</td>
+      </tr>
+      {% else %}
+      <tr><td colspan="3">ยังไม่มีการถามเลย</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</body>
+</html>

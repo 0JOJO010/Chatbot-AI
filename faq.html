@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>FAQ - IT Chatbot</title>
+  <style>
+    body { font-family: sans-serif; background: #f4f4f4; padding: 2rem; }
+    table { width:100%; border-collapse: collapse; background: white; }
+    th, td { padding: 8px 12px; border: 1px solid #ccc; }
+    th { background: #007bff; color: white; }
+    tr:nth-child(even) { background: #f9f9f9; }
+    a { color: #007bff; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <h2>📋 คำถามที่พบบ่อย (FAQ)</h2>
+  <a href="{{ url_for('chat_page') }}">← กลับไปหน้าแชท</a>
+  <table>
+    <thead>
+      <tr><th>หัวข้อ</th><th>คำตอบ</th><th>คีย์เวิร์ด</th></tr>
+    </thead>
+    <tbody>
+      {% for row in faqs %}
+      <tr>
+        <td>{{ row["หัวข้อ"] }}</td>
+        <td>{{ row["คำตอบที่ใช้ตอบกลับ"] }}</td>
+        <td>{{ row["คีย์เวิร์ดที่เกี่ยวข้อง"] }}</td>
+      </tr>
+      {% else %}
+      <tr><td colspan="3">ยังไม่มีข้อมูล FAQ</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</body>
+</html>

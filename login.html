@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Login - IT Chatbot</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background: #f4f4f4;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .login-container {
+      background: white;
+      padding: 2rem 3rem;
+      border-radius: 10px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 360px;
+      text-align: center;
+    }
+
+    h2 {
+      margin-bottom: 1.5rem;
+      color: #333;
+    }
+
+    input[type="text"],
+    input[type="password"] {
+      width: 100%;
+      padding: 12px 15px;
+      margin-bottom: 1rem;
+      border: 1.5px solid #ccc;
+      border-radius: 6px;
+      font-size: 16px;
+      transition: border-color 0.3s ease;
+    }
+
+    input[type="text"]:focus,
+    input[type="password"]:focus {
+      border-color: #007bff;
+      outline: none;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: #007bff;
+      border: none;
+      border-radius: 6px;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    .error-message {
+      color: #d93025;
+      margin-top: 0.5rem;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="login-container">
+    <h2>เข้าสู่ระบบ IT Chatbot</h2>
+    <form method="POST" action="/">
+      <input type="text" name="username" placeholder="ชื่อผู้ใช้" required />
+      <input type="password" name="password" placeholder="รหัสผ่าน" required />
+      <button type="submit">เข้าสู่ระบบ</button>
+    </form>
+
+    {% if error %}
+      <div class="error-message">{{ error }}</div>
+    {% endif %}
+  </div>
+
+</body>
+</html>

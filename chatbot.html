@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>IT Chatbot</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: sans-serif;
+      background: #f4f4f4;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .chat-container {
+      width: 100%;
+      max-width: 600px;
+      background: white;
+      border-radius: 10px;
+      padding: 2rem;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+    }
+
+    #title {
+      text-align: center;
+      margin-bottom: 1rem;
+      font-weight: 600;
+      font-size: 24px;
+      color: #333;
+    }
+
+    textarea {
+      width: 100%;
+      height: 100px;
+      margin-bottom: 1rem;
+      padding: 10px;
+      font-size: 16px;
+      resize: vertical;
+    }
+
+    button {
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: white;
+      font-size: 16px;
+      border: none;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: background-color 0.3s ease;
+      align-self: flex-start;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    #botResponse {
+      margin-top: 1rem;
+      background: #e9ecef;
+      padding: 1rem;
+      border-radius: 5px;
+      font-size: 16px;
+      min-height: 60px;
+      white-space: pre-wrap;
+    }
+
+    .user-info {
+      margin-bottom: 1rem;
+      font-size: 16px;
+      color: #333;
+    }
+
+    .admin-link {
+      margin-bottom: 1rem;
+      color: #dc3545;
+      font-weight: bold;
+    }
+
+    a.logout {
+      text-decoration: none;
+      color: #007bff;
+      font-size: 14px;
+      margin-top: 5px;
+      display: inline-block;
+    }
+
+    a.logout:hover {
+      text-decoration: underline;
+    }
+
+    /* ✅ Admin-only box */
+    .admin-box {
+      background-color: #d0e7ff;
+      border: 2px solid #90c2ff;
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      color: #004085;
+    }
+
+    .admin-box h3 {
+      margin-top: 0;
+      margin-bottom: 0.5rem;
+    }
+
+    .admin-box ul {
+      margin: 0;
+      padding-left: 1.2rem;
+    }
+
+    .admin-box li {
+      margin-bottom: 0.3rem;
+    }
+
+    /* ทำให้ลิงก์ในรายการเป็นสีน้ำเงิน และมี underline */
+    .admin-box li a {
+      color: #004085;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+
+    .admin-box li a:hover {
+      color: #002752;
+    }
+
+    @media (max-width: 640px) {
+      .chat-container {
+        margin: 1rem;
+        padding: 1rem;
+      }
+
+      #title {
+        font-size: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="chat-container">
+    <div class="user-info">
+      สวัสดี {{ username }} | บทบาท: {{ role }}<br>
+      <a class="logout" href="/logout">ออกจากระบบ</a>
+    </div>
+
+    {% if role == "admin" %}
+      <div class="admin-link">
+        🔧 คุณคือแอดมิน: <a href="/admin">คลิกเพื่อดูหน้าผู้ดูแลระบบ</a>
+      </div>
+
+      <div class="admin-box">
+        <h3>📌 หัวข้อสำหรับ(Admin IT)</h3>
+        <ul>
+          <li>
+             <a href="{{ url_for('stats_page') }}">
+                ตรวจสอบคำถามที่พบบ่อย
+          </a>
+          <li>
+            <a href="https://docs.google.com/spreadsheets/d/1kTVnFpVAWhUJwSsPbM_MLH-21VSu5io2EpEvXUitTSk/edit?usp=sharing" target="_blank" rel="noopener noreferrer">
+              อัปเดตฐานข้อมูลคำตอบ
+            </a>
+          </li>
+        </ul>
+      </div>
+    {% endif %}
+
+    <div id="title">IT Chatbot ช่วยแก้ปัญหาเรื่องคอมพิวเตอร์</div>
+    <textarea id="userInput" placeholder="พิมพ์ปัญหาของคุณที่นี่..."></textarea>
+    <button onclick="sendMessage()">ส่ง</button>
+    <div id="botResponse"></div>
+  </div>
+
+  <script>
+    async function sendMessage() {
+      const userInput = document.getElementById("userInput").value.trim();
+      const responseDiv = document.getElementById("botResponse");
+
+      if (!userInput) {
+        responseDiv.innerHTML = "❗ กรุณาพิมพ์คำถามก่อนส่ง";
+        return;
+      }
+
+      responseDiv.innerHTML = "⏳ กำลังประมวลผล...";
+
+      try {
+        const res = await fetch("/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message: userInput })
+        });
+
+        console.log("📡 Response status:", res.status);
+
+        if (!res.ok) {
+          const errorText = await res.text();
+          throw new Error("❌ เซิร์ฟเวอร์ตอบผิดพลาด: " + errorText);
+        }
+
+        const data = await res.json();
+        console.log("✅ Response data:", data);
+
+        if (data.error) {
+          responseDiv.innerHTML = `❌ ${data.error}`;
+        } else {
+          responseDiv.innerHTML = `<strong>หัวข้อ:</strong> ${data.topic} <br><strong>คำตอบ:</strong> ${data.response}`;
+        }
+      } catch (error) {
+        console.error("⚠️ Fetch error:", error);
+        responseDiv.innerHTML = `❌ ${error.message}`;
+      }
+    }
+  </script>
+
+</body>
+</html>
